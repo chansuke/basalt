@@ -4,5 +4,6 @@ rust:
   - nightly
 cache: cargo
 script:
+  - rustup component add rustfmt
   - cargo fmt --all -- --check
   - cargo test --all
