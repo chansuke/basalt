@@ -15,6 +15,15 @@ impl Instruction {
     }
 }
 
+impl From<u8> for Opcode {
+    fn from(v: u8) -> Self {
+        match v {
+            0 => return Opcode::HLT,
+            _ => return Opcode::IGL,
+        }
+    }
+}
+
 mod tests {
     use super::*;
 
