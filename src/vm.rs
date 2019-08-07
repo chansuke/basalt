@@ -36,6 +36,11 @@ impl VM {
                 let number = self.next_16_bits() as u32;
                 self.registers[register] = number as i32;
             }
+            instruction::Opcode::ADD => {
+                let register1 = self.registers[self.next_8_bits() as usize];
+                let register2 = self.registers[self.next_8_bits() as usize];
+                self.registers[self.next_8_bits() as usize] = register1 + register2;
+            }
             instruction::Opcode::HLT => {
                 println!("HLT");
                 return false;
