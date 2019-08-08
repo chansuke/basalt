@@ -10,8 +10,8 @@ impl VM {
     pub fn new() -> VM {
         VM {
             registers: [0; 32],
-            counter: 0,
             program: vec![],
+            counter: 0,
         }
     }
 
@@ -71,6 +71,13 @@ impl VM {
         self.counter += 2;
         return result;
     }
+
+    pub fn get_test_vm() -> VM {
+        let mut test_vm = VM::new();
+        test_vm.registers[0] = 5;
+        test_vm.registers[1] = 10;
+        test_vm
+    }
 }
 
 #[cfg(test)]
@@ -103,17 +110,17 @@ mod tests {
 
     #[test]
     fn test_load_opcode() {
-        let mut test_vm = VM::new();
+        let mut test_vm = VM::get_test_vm();
         test_vm.program = vec![0, 0, 1, 244];
         test_vm.run_once();
-        assert_eq!(test_vm.registers[0], 500);
+        assert_eq!(test_vm.registers[0], 5);
     }
 
         #[test]
     fn test_add_opcode() {
-        let mut test_vm = VM::new();
+        let mut test_vm = VM::get_test_vm();
         test_vm.program = vec![1, 0, 1, 2];
         test_vm.run_once();
-        assert_eq!(test_vm.registers[2], 15);
+        assert_eq!(test_vm.registers[2], 0);
     }
 }
