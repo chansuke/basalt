@@ -4,6 +4,8 @@ pub enum Opcode {
     IGL,
     LOAD,
     ADD,
+    SUB,
+    MUL,
 }
 
 #[derive(Debug, PartialEq)]

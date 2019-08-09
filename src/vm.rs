@@ -4,6 +4,7 @@ pub struct VM {
     registers: [i32; 32],
     counter: usize,
     program: Vec<u8>,
+    remainder: u32,
 }
 
 impl VM {
@@ -12,6 +13,7 @@ impl VM {
             registers: [0; 32],
             program: vec![],
             counter: 0,
+            remainder: 0,
         }
     }
 
@@ -41,6 +43,23 @@ impl VM {
                 let register2 = self.registers[self.next_8_bits() as usize];
                 self.registers[self.next_8_bits() as usize] = register1 + register2;
             }
+            instruction::Opcode::SUB => {
+                let register1 = self.registers[self.next_8_bits() as usize];
+                let register2 = self.registers[self.next_8_bits() as usize];
+                self.registers[self.next_8_bits() as usize] = register1 - register2;
+            }
+            instruction::Opcode::MUL => {
+                let register1 = self.registers[self.next_8_bits() as usize];
+                let register2 = self.registers[self.next_8_bits() as usize];
+                self.registers[self.next_8_bits() as usize] = register1 * register2;
+            }
+            Opcode::DIV => {
+                let register1 = self.registers[self.next_8_bits() as usize];
+                let register2 = self.registers[self.next_8_bits() as usize];
+                self.registers[self.next_8_bits() as usize] = register1 / register2;
+                self.remainder = (register1 % register2) as usize;
+            }
+
             instruction::Opcode::HLT => {
                 println!("HLT");
                 return false;
@@ -113,7 +132,7 @@ mod tests {
         let mut test_vm = VM::get_test_vm();
         test_vm.program = vec![0, 0, 1, 244];
         test_vm.run_once();
-        assert_eq!(test_vm.registers[0], 5);
+        assert_eq!(test_vm.registers[0], 500);
     }
 
         #[test]
