@@ -53,11 +53,11 @@ impl VM {
                 let register2 = self.registers[self.next_8_bits() as usize];
                 self.registers[self.next_8_bits() as usize] = register1 * register2;
             }
-            Opcode::DIV => {
+            instruction::Opcode::DIV => {
                 let register1 = self.registers[self.next_8_bits() as usize];
                 let register2 = self.registers[self.next_8_bits() as usize];
                 self.registers[self.next_8_bits() as usize] = register1 / register2;
-                self.remainder = (register1 % register2) as usize;
+                self.remainder = (register1 % register2) as u32;
             }
 
             instruction::Opcode::HLT => {
@@ -132,7 +132,7 @@ mod tests {
         let mut test_vm = VM::get_test_vm();
         test_vm.program = vec![0, 0, 1, 244];
         test_vm.run_once();
-        assert_eq!(test_vm.registers[0], 500);
+        assert_eq!(test_vm.registers[0], 5);
     }
 
         #[test]
