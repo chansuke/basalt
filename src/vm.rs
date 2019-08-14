@@ -68,6 +68,10 @@ impl VM {
                 println!("IGL");
                 return false;
             }
+            instruction::Opcode::JMP => {
+                let target = self.registers[self.next_8_bits() as usize];
+                self.counter = target as usize;
+            }
         }
         true
     }
@@ -135,11 +139,20 @@ mod tests {
         assert_eq!(test_vm.registers[0], 5);
     }
 
-        #[test]
+    #[test]
     fn test_add_opcode() {
         let mut test_vm = VM::get_test_vm();
         test_vm.program = vec![1, 0, 1, 2];
         test_vm.run_once();
         assert_eq!(test_vm.registers[2], 0);
+    }
+
+    #[test]
+    fn test_jmp_opcode() {
+        let mut test_vm = VM::get_test_vm();
+        test_vm.registers[0] = 1;
+        test_vm.program = vec![7, 5, 1, 1];
+        test_vm.run_once();
+        assert_eq!(test_vm.counter, 1);
     }
 }

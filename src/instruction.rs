@@ -7,6 +7,7 @@ pub enum Opcode {
     SUB,
     MUL,
     DIV,
+    JMP
 }
 
 #[derive(Debug, PartialEq)]
