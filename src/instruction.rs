@@ -1,13 +1,32 @@
 #[derive(Debug, PartialEq)]
 pub enum Opcode {
-    HLT,
-    IGL,
     LOAD,
     ADD,
     SUB,
     MUL,
     DIV,
-    JMP
+    HLT,
+    IGL,
+    JMP,
+    EQ,
+    NEQ,
+}
+
+impl From<u8> for Opcode {
+    fn from(v: u8) -> Self {
+        match v {
+            0 => Opcode::LOAD,
+            1 => Opcode::ADD,
+            2 => Opcode::SUB,
+            3 => Opcode::MUL,
+            4 => Opcode::DIV,
+            6 => Opcode::HLT,
+            7 => Opcode::JMP,
+            8 => Opcode::EQ,
+            9 => Opcode::NEQ,
+            _ => Opcode::IGL,
+        }
+    }
 }
 
 #[derive(Debug, PartialEq)]
@@ -21,14 +40,6 @@ impl Instruction {
     }
 }
 
-impl From<u8> for Opcode {
-    fn from(v: u8) -> Self {
-        match v {
-            0 => return Opcode::HLT,
-            _ => return Opcode::IGL,
-        }
-    }
-}
 
 mod tests {
     use super::*;
