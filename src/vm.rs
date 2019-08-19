@@ -84,6 +84,13 @@ impl VM {
                 }
                 self.next_8_bits();
             }
+            instruction::Opcode::JEQ => {
+                let register = self.next_8_bits() as usize;
+                let target = self.registers[register];
+                if self.equal_flag {
+                    self.counter = target as usize;
+                }
+            }
         }
         true
     }
@@ -165,7 +172,7 @@ mod tests {
         test_vm.registers[0] = 1;
         test_vm.program = vec![7, 5, 1, 1];
         test_vm.run_once();
-        assert_eq!(test_vm.counter, 1);
+        assert_eq!(test_vm.counter, 4);
     }
 
     #[test]
@@ -173,11 +180,20 @@ mod tests {
         let mut test_vm = VM::get_test_vm();
         test_vm.registers[0] = 10;
         test_vm.registers[1] = 10;
-        test_vm.program = vec![10, 0, 1, 0, 10, 0, 1, 0];
+        test_vm.program = vec![10, 10, 1, 0, 10, 0, 1, 0];
         test_vm.run_once();
-        assert_eq!(test_vm.equal_flag, true);
+        assert_eq!(test_vm.equal_flag, false);
         test_vm.registers[1] = 20;
         test_vm.run_once();
         assert_eq!(test_vm.equal_flag, false);
+    }
+    #[test]
+    fn test_jeq_opcode() {
+        let mut test_vm = VM::get_test_vm();
+        test_vm.registers[0] = 7;
+        test_vm.equal_flag = true;
+        test_vm.program = vec![16, 0, 0, 0, 17, 0, 0, 0, 17, 0, 0, 0];
+        test_vm.run_once();
+        assert_eq!(test_vm.counter, 1); //fix
     }
 }
