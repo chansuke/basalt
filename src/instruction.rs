@@ -40,7 +40,6 @@ impl Instruction {
     }
 }
 
-
 mod tests {
     use super::*;
 

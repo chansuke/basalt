@@ -177,4 +177,5 @@ mod tests {
         test_vm.run_once();
         assert_eq!(test_vm.counter, 4);
     }
+
 }
