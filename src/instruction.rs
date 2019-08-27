@@ -12,6 +12,10 @@ pub enum Opcode {
     NEQ,
     GT,
     GTE,
+    LT,
+    LTE,
+    JMPE,
+    NOP,
 }
 
 impl From<u8> for Opcode {
@@ -28,6 +32,10 @@ impl From<u8> for Opcode {
             9 => Opcode::NEQ,
             10 => Opcode::GT,
             11 => Opcode::GTE,
+            12 => Opcode::LT,
+            13 => Opcode::LTE,
+            14 => Opcode::JMPE,
+            15 => Opcode::NOP,
             _ => Opcode::IGL,
         }
     }
