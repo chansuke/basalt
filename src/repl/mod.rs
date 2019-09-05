@@ -1,7 +1,4 @@
-use std;
-use std::io;
-use std::io::Write;
-use vm::VM;
+use crate::vm::VM;
 
 pub struct REPL {
     command_buffer: Vec<String>,
