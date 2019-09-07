@@ -25,7 +25,9 @@ impl REPL {
             print!(">>> ");
             io::stdout().flush().expect("Unable to flush stdout");
 
-            stdin.read_line(&mut buffer).expect("Unable to read line from user");
+            stdin
+                .read_line(&mut buffer)
+                .expect("Unable to read line from user");
             let buffer = buffer.trim();
 
             self.command_buffer.push(buffer.to_string());
@@ -34,7 +36,7 @@ impl REPL {
                 "quit" => {
                     println!("Thank you");
                     std::process::exit(0);
-                },
+                }
                 "history" => {
                     for command in &self.command_buffer {
                         println!("{}", command);
