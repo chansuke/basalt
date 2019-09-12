@@ -1,11 +1,11 @@
 use crate::instruction::Opcode;
 
 pub struct VM {
-    registers: [i32; 32],
-    counter: usize,
-    program: Vec<u8>,
-    remainder: u32,
-    equal_flag: bool,
+    pub registers: [i32; 32],
+    pub counter: usize,
+    pub program: Vec<u8>,
+    pub remainder: u32,
+    pub equal_flag: bool,
 }
 
 impl VM {
@@ -168,6 +168,11 @@ impl VM {
         self.counter += 2;
         return result;
     }
+
+    pub fn add_byte(&mut self, b: u8) {
+        self.program.push(b);
+    }
+
 }
 
 #[cfg(test)]
