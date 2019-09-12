@@ -1,11 +1,11 @@
-use crate::instruction::{Opcode};
+use crate::instruction::Opcode;
 
 pub struct VM {
-    registers: [i32; 32],
-    counter: usize,
-    program: Vec<u8>,
-    remainder: u32,
-    equal_flag: bool,
+    pub registers: [i32; 32],
+    pub counter: usize,
+    pub program: Vec<u8>,
+    pub remainder: u32,
+    pub equal_flag: bool,
 }
 
 impl VM {
@@ -83,7 +83,7 @@ impl VM {
                     self.equal_flag = false;
                 }
                 self.next_8_bits();
-            },
+            }
             Opcode::NEQ => {
                 let register1 = self.registers[self.next_8_bits() as usize];
                 let register2 = self.registers[self.next_8_bits() as usize];
@@ -93,7 +93,7 @@ impl VM {
                     self.equal_flag = false;
                 }
                 self.next_8_bits();
-            },
+            }
             Opcode::GT => {
                 let register1 = self.registers[self.next_8_bits() as usize];
                 let register2 = self.registers[self.next_8_bits() as usize];
@@ -103,7 +103,7 @@ impl VM {
                     self.equal_flag = false;
                 }
                 self.next_8_bits();
-            },
+            }
             Opcode::GTE => {
                 let register1 = self.registers[self.next_8_bits() as usize];
                 let register2 = self.registers[self.next_8_bits() as usize];
@@ -113,7 +113,7 @@ impl VM {
                     self.equal_flag = false
                 }
                 self.next_8_bits();
-            },
+            }
             Opcode::LT => {
                 let register1 = self.registers[self.next_8_bits() as usize];
                 let register2 = self.registers[self.next_8_bits() as usize];
@@ -123,7 +123,7 @@ impl VM {
                     self.equal_flag = false;
                 }
                 self.next_8_bits();
-            },
+            }
             Opcode::LTE => {
                 let register1 = self.registers[self.next_8_bits() as usize];
                 let register2 = self.registers[self.next_8_bits() as usize];
@@ -133,19 +133,19 @@ impl VM {
                     self.equal_flag = false;
                 }
                 self.next_8_bits();
-            },
+            }
             Opcode::JMPE => {
                 let register = self.next_8_bits() as usize;
                 let target = self.registers[register];
                 if self.equal_flag {
                     self.counter = target as usize;
                 }
-            },
+            }
             Opcode::NOP => {
                 self.next_8_bits();
                 self.next_8_bits();
                 self.next_8_bits();
-            },
+            }
         }
         true
     }
@@ -168,6 +168,11 @@ impl VM {
         self.counter += 2;
         return result;
     }
+
+    pub fn add_byte(&mut self, b: u8) {
+        self.program.push(b);
+    }
+
 }
 
 #[cfg(test)]
@@ -229,5 +234,4 @@ mod tests {
         test_vm.run_once();
         assert_eq!(test_vm.counter, 4);
     }
-
 }
