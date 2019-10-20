@@ -2,7 +2,7 @@ pub mod opcode_parsers;
 pub mod operand_parsers;
 pub mod register_parsers;
 
-use instruction::Opcode;
+use crate::instruction::Opcode;
 
 #[derive(Debug, PartialEq)]
 pub enum Token {

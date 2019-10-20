@@ -1,7 +1,7 @@
 use nom::types::CompleteStr;
-use nom::digit;
+use nom::*;
 
-use assembler::Token;
+use crate::assembler::Token;
 
 named!(pub integer_operand<CompleteStr, Token>,
     ws!(
