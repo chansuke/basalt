@@ -18,11 +18,10 @@ pub struct AssemblerInstruction {
 impl AssemblerInstruction {
   pub fn to_bytes(&self) -> Vec<u8> {
     let mut results = vec![];
-    match &self.opcode {
+    match self.opcode {
       Token::Op { code } => match code {
         _ => {
-          let b: u8 = (*code).into();
-          results.push(b);
+          results.push(code as u8);
         }
       },
       _ => {
