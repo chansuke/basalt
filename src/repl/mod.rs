@@ -1,8 +1,11 @@
 use crate::vm::VM;
+use crate::assembler::program_parsers::{Program, program};
 use std;
 use std::io;
 use std::io::Write;
 use std::num::ParseIntError;
+
+use nom::types::CompleteStr;
 
 pub struct REPL {
     command_buffer: Vec<String>,
@@ -53,17 +56,16 @@ impl REPL {
                     println!("{:#?}", self.vm.registers);
                 }
                 _ => {
-                    let results = self.parse_hex(buffer);
-                    match results {
-                        Ok(bytes) => {
-                            for byte in bytes {
-                                self.vm.add_byte(byte)
-                            }
-                        },
-                        Err(_e) => {
-                            println!("Unable to decode hex string");
-                        }
-                    };
+                    let parsed_program = program(CompleteStr(buffer));
+                    if !parsed_program.is_ok() {
+                        println!("Unable to parse input");
+                        continue;
+                    }
+                    let (_, result) = parsed_program.unwrap();
+                    let bytecode = result.to_bytes();
+                    for byte in bytecode {
+                        self.vm.add_byte(byte);
+                    }
                     self.vm.run_once();
                 }
             }
