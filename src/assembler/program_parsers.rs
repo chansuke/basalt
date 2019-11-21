@@ -1,5 +1,7 @@
 use nom::types::CompleteStr;
 use nom::do_parse;
+use nom::named;
+use nom::many1;
 
 use crate::assembler::instruction_parsers::{AssemblerInstruction, instruction_one};
 
@@ -23,7 +25,7 @@ named!(pub program<CompleteStr, Program>,
     instructions: many1!(instruction_one) >>
     (
       Program {
-        instructions: instruction
+        instructions
       }
     )
   )
