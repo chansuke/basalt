@@ -1,11 +1,23 @@
 use nom::types::CompleteStr;
 use nom::do_parse;
+use nom::named;
+use nom::many1;
 
-use assembler::instruction_parsers::{AssemblerInstruction, instruction_one};
+use crate::assembler::instruction_parsers::{AssemblerInstruction, instruction_one};
 
 #[derive(Debug, PartialEq)]
 pub struct Program {
   instructions: Vec<AssemblerInstruction>
+}
+
+impl Program {
+    pub fn to_bytes(&self) -> Vec<u8> {
+        let mut program = vec![];
+        for instruction in &self.instructions {
+            program.append(&mut instruction.to_bytes());
+        }
+        program
+    }
 }
 
 named!(pub program<CompleteStr, Program>,
@@ -13,7 +25,7 @@ named!(pub program<CompleteStr, Program>,
     instructions: many1!(instruction_one) >>
     (
       Program {
-        instructions: instruction
+        instructions
       }
     )
   )
