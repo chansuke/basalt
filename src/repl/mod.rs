@@ -1,9 +1,8 @@
+use crate::assembler::program_parsers::program;
 use crate::vm::VM;
-use crate::assembler::program_parsers::{Program, program};
 use std;
 use std::io;
 use std::io::Write;
-use std::num::ParseIntError;
 
 use nom::types::CompleteStr;
 
@@ -70,22 +69,5 @@ impl REPL {
                 }
             }
         }
-    }
-
-    fn parse_hex(&mut self, i: &str) -> Result<Vec<u8>, ParseIntError>{
-        let split = i.split(" ").collect::<Vec<&str>>();
-        let mut results: Vec<u8> = vec![];
-        for hex_string in split {
-            let byte = u8::from_str_radix(&hex_string, 16);
-            match byte {
-                Ok(result) => {
-                    results.push(result);
-                }
-                Err(e) => {
-                    return Err(e)
-                }
-            }
-        }
-        Ok(results)
     }
 }
