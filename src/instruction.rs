@@ -1,3 +1,5 @@
+use nom::types::CompleteStr;
+
 #[derive(Copy, Clone, Debug, PartialEq)]
 pub enum Opcode {
     LOAD,
@@ -41,6 +43,29 @@ impl From<u8> for Opcode {
     }
 }
 
+impl<'a> From<CompleteStr<'a>> for Opcode {
+    fn from(v: CompleteStr<'a>) -> Self {
+        match v {
+            CompleteStr("load") => Opcode::LOAD,
+            CompleteStr("add") => Opcode::ADD,
+            CompleteStr("sub") => Opcode::SUB,
+            CompleteStr("mul") => Opcode::MUL,
+            CompleteStr("div") => Opcode::DIV,
+            CompleteStr("hlt") => Opcode::HLT,
+            CompleteStr("jmp") => Opcode::JMP,
+            CompleteStr("eq") => Opcode::EQ,
+            CompleteStr("neq") => Opcode::NEQ,
+            CompleteStr("gt") => Opcode::GT,
+            CompleteStr("gte") => Opcode::GTE,
+            CompleteStr("lt") => Opcode::LT,
+            CompleteStr("lte") => Opcode::LTE,
+            CompleteStr("jmpe") => Opcode::JMPE,
+            CompleteStr("nop") => Opcode::NOP,
+            _ => Opcode::IGL,
+        }
+    }
+}
+
 #[derive(Debug, PartialEq)]
 pub struct Instruction {
     opcode: Opcode,
@@ -53,6 +78,8 @@ impl Instruction {
 }
 
 mod tests {
+    use super::*;
+
     #[test]
     fn test_new_hlt() {
         let opcode = Opcode::HLT;

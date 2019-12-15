@@ -17,6 +17,11 @@ named!(pub integer_operand<CompleteStr, Token>,
 );
 
 mod tests {
+    #![allow(unused_imports)]
+    use super::integer_operand;
+    use crate::assembler::Token;
+    use nom::types::CompleteStr;
+
     #[test]
     fn test_parse_integer_operand() {
         let result = integer_operand(CompleteStr("#10"));
