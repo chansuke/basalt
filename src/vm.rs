@@ -6,6 +6,7 @@ pub struct VM {
     pub program: Vec<u8>,
     pub remainder: u32,
     pub equal_flag: bool,
+    heap: Vec<u8>,
 }
 
 impl VM {
@@ -16,6 +17,7 @@ impl VM {
             counter: 0,
             remainder: 0,
             equal_flag: false,
+            heap: vec![],
         }
     }
 
@@ -146,6 +148,12 @@ impl VM {
                 self.next_8_bits();
                 self.next_8_bits();
             }
+            Opcode::ALOC => {
+                let register = self.next_8_bits() as usize;
+                let bytes = self.registers[register];
+                let new_end = self.heap.len() as i32 + bytes;
+                self.heap.resize(new_end as usize, 0);
+            }
         }
         true
     }
@@ -172,7 +180,6 @@ impl VM {
     pub fn add_byte(&mut self, b: u8) {
         self.program.push(b);
     }
-
 }
 
 #[cfg(test)]
@@ -233,5 +240,14 @@ mod tests {
         test_vm.program = vec![7, 0, 0, 0];
         test_vm.run_once();
         assert_eq!(test_vm.counter, 4);
+    }
+
+    #[test]
+    fn test_aloc_opcode() {
+        let mut test_vm = get_test_vm();
+        test_vm.registers[0] = 1024;
+        test_vm.program = vec![17, 0, 0, 0];
+        test_vm.run_once();
+        assert_eq!(test_vm.heap.len(), 0);
     }
 }
