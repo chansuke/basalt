@@ -18,6 +18,7 @@ pub enum Opcode {
     LTE,
     JMPE,
     NOP,
+    ALOC,
 }
 
 impl From<u8> for Opcode {
@@ -38,6 +39,7 @@ impl From<u8> for Opcode {
             13 => Opcode::LTE,
             14 => Opcode::JMPE,
             15 => Opcode::NOP,
+            16 => Opcode::ALOC,
             _ => Opcode::IGL,
         }
     }
@@ -61,6 +63,7 @@ impl<'a> From<CompleteStr<'a>> for Opcode {
             CompleteStr("lte") => Opcode::LTE,
             CompleteStr("jmpe") => Opcode::JMPE,
             CompleteStr("nop") => Opcode::NOP,
+            CompleteStr("aloc") => Opcode::ALOC,
             _ => Opcode::IGL,
         }
     }
