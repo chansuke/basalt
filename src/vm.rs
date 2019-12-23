@@ -34,7 +34,7 @@ impl VM {
 
     fn execute_instruction(&mut self) -> bool {
         if self.counter >= self.program.len() {
-            return false;
+            return true;
         }
         match self.decode_opcode() {
             Opcode::LOAD => {
@@ -66,11 +66,11 @@ impl VM {
 
             Opcode::HLT => {
                 println!("HLT");
-                return false;
+                return true;
             }
             Opcode::IGL => {
-                println!("IGL");
-                return false;
+                println!("Illegal");
+                return true;
             }
             Opcode::JMP => {
                 let target = self.registers[self.next_8_bits() as usize];
