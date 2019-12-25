@@ -4,6 +4,7 @@ pub mod opcode;
 pub mod operand_parsers;
 pub mod program_parsers;
 pub mod register_parsers;
+pub mod label_parsers;
 
 use crate::instruction::Opcode;
 

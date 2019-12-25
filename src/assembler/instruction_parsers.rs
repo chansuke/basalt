@@ -6,6 +6,7 @@ use nom::types::CompleteStr;
 
 use crate::assembler::opcode_parsers::opcode;
 use crate::assembler::operand_parsers::operand;
+use crate::assembler::label_parsers::label_declaration;
 use crate::assembler::Token;
 
 #[derive(Debug, PartialEq)]
@@ -25,8 +26,7 @@ impl AssemblerInstruction {
             match token {
                 Token::Op { code } => match code {
                     _ => {
-                        let b: u8 = (*code).into();
-                        results.push(b);
+                        results.push(*code as u8);
                     }
                 },
                 _ => {
@@ -101,40 +101,5 @@ named!(pub instruction<CompleteStr, AssemblerInstruction>,
 
 #[cfg(test)]
 mod tests {
-    use super::*;
-    use crate::instruction::Opcode;
-
-    // #[test]
-    // fn test_parse_instruction_form_one() {
-    //     let result = instruction_one(CompleteStr("load $0 #100\n"));
-    //     assert_eq!(
-    //         result,
-    //         Ok((
-    //             CompleteStr(""),
-    //             AssemblerInstruction {
-    //                 opcode: Token::Op { code: Opcode::LOAD },
-    //                 operand1: Some(Token::Register { reg_num: 0 }),
-    //                 operand2: Some(Token::IntegerOperand { value: 100 }),
-    //                 operand3: None
-    //             }
-    //         ))
-    //     );
-    // }
-
-    // #[test]
-    // fn test_parse_instruction_form_two() {
-    //     let result = instruction_two(CompleteStr("hlt\n"));
-    //     assert_eq!(
-    //         result,
-    //         Ok((
-    //             CompleteStr(""),
-    //             AssemblerInstruction {
-    //                 opcode: Token::Op { code: Opcode::HLT },
-    //                 operand1: None,
-    //                 operand2: None,
-    //                 operand3: None
-    //             }
-    //         ))
-    //     );
-    // }
+    //TODO: write tests
 }
