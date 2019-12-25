@@ -1,3 +1,4 @@
+use crate::assembler::register_parsers::register;
 use nom::named;
 use nom::types::CompleteStr;
 use nom::*;
@@ -13,6 +14,13 @@ named!(pub integer_operand<CompleteStr, Token>,
                 Token::IntegerOperand{value: reg_num.parse::<i32>().unwrap()}
             )
         )
+    )
+);
+
+named!(pub operand<CompleteStr, Token>,
+    alt!(
+        integer_operand |
+        register
     )
 );
 
