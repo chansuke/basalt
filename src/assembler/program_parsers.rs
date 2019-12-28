@@ -4,17 +4,18 @@ use nom::named;
 use nom::types::CompleteStr;
 
 use crate::assembler::instruction_parsers::{instruction, AssemblerInstruction};
+use crate::assembler::SymbolTable;
 
 #[derive(Debug, PartialEq)]
 pub struct Program {
-  instructions: Vec<AssemblerInstruction>,
+  pub instructions: Vec<AssemblerInstruction>,
 }
 
 impl Program {
-  pub fn to_bytes(&self) -> Vec<u8> {
+  pub fn to_bytes(&self, symbols: &SymbolTable) -> Vec<u8> {
     let mut program = vec![];
     for instruction in &self.instructions {
-      program.append(&mut instruction.to_bytes());
+      program.append(&mut instruction.to_bytes(symbols));
     }
     program
   }
