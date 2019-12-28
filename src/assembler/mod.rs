@@ -132,3 +132,17 @@ impl SymbolTable {
     None
   }
 }
+
+#[test]
+fn test_symbol_table() {
+  let mut sym = SymbolTable::new();
+  let new_symbol = Symbol::new("test".to_string(), SymbolType::Label, 12);
+  sym.add_symbol(new_symbol);
+  assert_eq!(sym.symbols.len(), 1);
+  let v = sym.symbol_value("test");
+  assert_eq!(true, v.is_some());
+  let v = v.unwrap();
+  assert_eq!(v, 12);
+  let v = sym.symbol_value("none");
+  assert_eq!(v.is_some(), false);
+}
