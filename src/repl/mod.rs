@@ -6,9 +6,12 @@ use std::io::Write;
 
 use nom::types::CompleteStr;
 
+use crate::assembler::Assembler;
+
 pub struct REPL {
     command_buffer: Vec<String>,
     vm: VM,
+    asm: Assembler,
 }
 
 impl REPL {
@@ -16,6 +19,7 @@ impl REPL {
         REPL {
             vm: VM::new(),
             command_buffer: vec![],
+            asm: Assembler::new()
         }
     }
 
@@ -61,7 +65,7 @@ impl REPL {
                         continue;
                     }
                     let (_, result) = parsed_program.unwrap();
-                    let bytecode = result.to_bytes();
+                    let bytecode = result.to_bytes(&self.asm.symbols);
                     for byte in bytecode {
                         self.vm.add_byte(byte);
                     }
