@@ -1,0 +1,9 @@
+name: basalt
+version: '0.0.1'
+author: chansuke <moonset20@gmail.com>
+about: An Interpretor
+args:
+  - INPUT_FILE:
+      help: Set the input file to use
+      required: false
+      index: 1

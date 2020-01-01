@@ -4,10 +4,10 @@ use nom::named;
 use nom::opt;
 use nom::types::CompleteStr;
 
+use crate::assembler::label_parsers::label_declaration;
 use crate::assembler::opcode_parsers::opcode;
 use crate::assembler::operand_parsers::operand;
-use crate::assembler::label_parsers::label_declaration;
-use crate::assembler::{Token, SymbolTable};
+use crate::assembler::{SymbolTable, Token};
 
 #[derive(Debug, PartialEq)]
 pub struct AssemblerInstruction {
@@ -52,20 +52,13 @@ impl AssemblerInstruction {
         self.label.is_some()
     }
 
-
     pub fn label_name(&self) -> Option<String> {
         match &self.label {
-            Some(l) => {
-                match l {
-                    Token::LabelDeclaration{name} => {
-                        Some(name.clone())
-                    }
-                    _ => None
-                }
+            Some(l) => match l {
+                Token::LabelDeclaration { name } => Some(name.clone()),
+                _ => None,
             },
-            None => {
-                None
-            }
+            None => None,
         }
     }
 
@@ -81,17 +74,15 @@ impl AssemblerInstruction {
                 results.push(byte2 as u8);
                 results.push(byte1 as u8);
             }
-            Token::LabelUsage { name } => {
-                match symbols.symbol_value(name) {
-                    Some(value) => {
-                        let byte1 = value;
-                        let byte2 = value >> 8;
-                        results.push(byte2 as u8);
-                        results.push(byte1 as u8);
-                    },
-                    None => {}
+            Token::LabelUsage { name } => match symbols.symbol_value(name) {
+                Some(value) => {
+                    let byte1 = value;
+                    let byte2 = value >> 8;
+                    results.push(byte2 as u8);
+                    results.push(byte1 as u8);
                 }
-            }
+                None => {}
+            },
             _ => {
                 println!("Opcode found in operand field");
                 std::process::exit(1);
