@@ -1,3 +1,4 @@
+use crate::assembler::PIE_HEADER_PREFIX;
 use crate::instruction::Opcode;
 
 pub struct VM {
@@ -22,6 +23,9 @@ impl VM {
     }
 
     pub fn run(&mut self) {
+        if !self.verify_header() {
+            println!("Header was not correct");
+        }
         let mut is_done = false;
         while !is_done {
             is_done = self.execute_instruction();
@@ -179,6 +183,17 @@ impl VM {
 
     pub fn add_byte(&mut self, b: u8) {
         self.program.push(b);
+    }
+
+    pub fn add_bytes(&mut self, mut b: Vec<u8>) {
+        self.program.append(&mut b);
+    }
+
+    fn verify_header(&self) -> bool {
+        if self.program[0..4] != PIE_HEADER_PREFIX {
+            return false;
+        }
+        true
     }
 }
 

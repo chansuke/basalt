@@ -19,7 +19,7 @@ impl REPL {
         REPL {
             vm: VM::new(),
             command_buffer: vec![],
-            asm: Assembler::new()
+            asm: Assembler::new(),
         }
     }
 
