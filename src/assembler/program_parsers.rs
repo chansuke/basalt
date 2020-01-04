@@ -44,4 +44,12 @@ mod tests {
         assert_eq!(leftover, CompleteStr(""));
         assert_eq!(1, p.instructions.len());
     }
+
+    #[test]
+    fn test_complete_program() {
+        let test_program = CompleteStr(".data\nhello: .asciiz 'Hello everyone!'\n.code\nhlt");
+        let result = program(test_program);
+        assert_eq!(result.is_ok(), true);
+    }
+
 }

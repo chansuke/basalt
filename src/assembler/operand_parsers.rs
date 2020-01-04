@@ -1,11 +1,12 @@
 use crate::assembler::register_parsers::register;
+use crate::assembler::label_parsers::label_usage;
 use nom::named;
 use nom::types::CompleteStr;
 use nom::*;
 
 use crate::assembler::Token;
 
-named!(pub integer_operand<CompleteStr, Token>,
+named!(integer_operand<CompleteStr, Token>,
     ws!(
         do_parse!(
             tag!("#") >>
@@ -20,7 +21,20 @@ named!(pub integer_operand<CompleteStr, Token>,
 named!(pub operand<CompleteStr, Token>,
     alt!(
         integer_operand |
-        register
+        label_usage |
+        register |
+        irstring
+    )
+);
+
+named!(irstring<CompleteStr, Token>,
+    do_parse!(
+        tag!("'") >>
+        content: take_until!("'") >>
+        tag!("'") >>
+        (
+            Token::IrString{ name: content.to_string() }
+        )
     )
 );
 
