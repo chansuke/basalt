@@ -1,6 +1,6 @@
 use std::fs::File;
-use std::path::Path;
 use std::io::Read;
+use std::path::Path;
 
 pub mod assembler;
 pub mod instruction;

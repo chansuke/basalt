@@ -51,5 +51,4 @@ mod tests {
         let result = program(test_program);
         assert_eq!(result.is_ok(), true);
     }
-
 }

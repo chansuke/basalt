@@ -1,5 +1,5 @@
-use crate::assembler::register_parsers::register;
 use crate::assembler::label_parsers::label_usage;
+use crate::assembler::register_parsers::register;
 use nom::named;
 use nom::types::CompleteStr;
 use nom::*;
