@@ -1,8 +1,8 @@
 use nom::alpha;
 use nom::types::CompleteStr;
 
-use crate::assembler::Token;
 use crate::assembler::label_parsers::label_declaration;
+use crate::assembler::Token;
 
 named!(pub directive <CompleteStr, Token>,
     ws!(
@@ -53,16 +53,21 @@ named!(pub directive<CompleteStr, AssemblerInstruction>,
 
 mod tests {
     #![allow(unused_imports)]
-    use nom::types::CompleteStr;
     use super::directive;
     use assembler::Token;
+    use nom::types::CompleteStr;
 
     #[test]
     fn test_parser_directive() {
         let result = directive(CompleteStr(".data"));
         assert_eq!(result.is_ok(), true);
         let (_, directive) = result.unwrap();
-        assert_eq!(directive, Token::Directive{name: "data".to_string() })
+        assert_eq!(
+            directive,
+            Token::Directive {
+                name: "data".to_string()
+            }
+        )
     }
 
     #[test]
@@ -71,20 +76,20 @@ mod tests {
         assert_eq!(result.is_ok(), true);
         let (_, directive) = result.unwrap();
 
-        let correct_instruction =
-            AssemblerInstruction {
-                opcode: None,
-                label: Some(
-                    Token::LabelDeclaration {
-                        name: "test".to_string()
-                    }),
-                directive: Some(
-                    Token::Directive {
-                        name: "asciiz".to_string()
-                    }),
-                operand1: Some(Token::IrString { name: "Hello".to_string() }),
-                operand2: None,
-                operand3: None };
+        let correct_instruction = AssemblerInstruction {
+            opcode: None,
+            label: Some(Token::LabelDeclaration {
+                name: "test".to_string(),
+            }),
+            directive: Some(Token::Directive {
+                name: "asciiz".to_string(),
+            }),
+            operand1: Some(Token::IrString {
+                name: "Hello".to_string(),
+            }),
+            operand2: None,
+            operand3: None,
+        };
         assert_eq!(directive, correct_instruction);
     }
 }

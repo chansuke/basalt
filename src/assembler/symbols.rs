@@ -6,7 +6,7 @@ pub struct Symbol {
 }
 
 impl Symbol {
-    pub fn new(name: String, symbol_type: SymbolType, offset: u32) -> Symbol {
+    pub fn new(name: String, symbol_type: SymbolType, _offset: u32) -> Symbol {
         Symbol {
             name,
             symbol_type,
@@ -30,7 +30,7 @@ pub enum SymbolType {
 
 #[derive(Debug)]
 pub struct SymbolTable {
-    symbols: Vec<Symbol>,
+    pub symbols: Vec<Symbol>,
 }
 
 impl SymbolTable {
@@ -61,12 +61,12 @@ impl SymbolTable {
     }
 
     pub fn set_symbol_offset(&mut self, s: &str, offset: u32) -> bool {
-      for symbol in &mut self.symbols {
-        if symbol.name == s {
-          symbol.offset = Some(offset);
-          return true;
+        for symbol in &mut self.symbols {
+            if symbol.name == s {
+                symbol.offset = Some(offset);
+                return true;
+            }
         }
-      }
-      false
+        false
     }
 }

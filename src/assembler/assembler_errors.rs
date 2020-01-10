@@ -13,7 +13,7 @@ pub enum AssemblerError {
 }
 
 impl fmt::Display for AssemblerError {
-    fn fmt(&self, f: &mut fmt::Formatter) -> fmr::Result {
+    fn fmt(&self, f: &mut fmt::Formatter) -> fmt::Result {
         match *self {
           AssemblerError::NoSegmentDeclarationFound{ instruction } => {
             f.write_str(&format!("No segment declaration (e.g., .code, .data) prior to finding an opcode or other directive. Instruction # was {}:", instruction))
@@ -24,7 +24,7 @@ impl fmt::Display for AssemblerError {
           AssemblerError::SymbolAlreadyDeclared => {
             f.write_str("This symbol was previously declared.")
           }
-          AssemblerError::UnknownDirectiveFound { ref: directive } => {
+          AssemblerError::UnknownDirectiveFound { ref directive } => {
             f.write_str(&format!("Invalid or unknown directive found. Directive name was: {}", directive))
           }
           AssemblerError::NonOpcodeInOpcodeField => {
@@ -41,8 +41,8 @@ impl fmt::Display for AssemblerError {
 }
 
 impl Error for AssemblerError {
-  fn description(&self) -> &str {
-    match self {
+    fn description(&self) -> &str {
+        match self {
       AssemblerError::NoSegmentDeclarationFound{ .. } => {
         "No segment declaration (e.g., .code, .data) prior to finding an opcode or other directive."
       }
@@ -65,5 +65,5 @@ impl Error for AssemblerError {
         "There was an error parsing the code"
       }
     }
-  }
+    }
 }

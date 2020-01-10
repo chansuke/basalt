@@ -1,3 +1,4 @@
+pub mod assembler_errors;
 pub mod instruction_parsers;
 pub mod label_parsers;
 pub mod opcode;
@@ -5,7 +6,6 @@ pub mod opcode_parsers;
 pub mod operand_parsers;
 pub mod program_parsers;
 pub mod register_parsers;
-pub mod assembler_errors;
 pub mod symbols;
 
 use nom::types::CompleteStr;
@@ -24,6 +24,7 @@ pub enum Token {
     LabelDeclaration { name: String },
     LabelUsage { name: String },
     Directive { name: String },
+    IrString { name: String },
 }
 
 pub const PIE_HEADER_PREFIX: [u8; 4] = [45, 50, 49, 45];
@@ -80,7 +81,9 @@ impl Assembler {
             }
             Err(e) => {
                 println!("There was an error assembling the code: {:?}", e);
-                Err(vec![AssemblerError::ParseError { error: e.to_string() }])
+                Err(vec![AssemblerError::ParseError {
+                    error: e.to_string(),
+                }])
             }
         }
     }
@@ -115,21 +118,21 @@ impl Assembler {
         program
     }
 
-    fn extract_labels(&mut self, p: &Program) {
-        let mut c = 0;
-        for i in &p.instructions {
-            if i.is_label() {
-                match i.label_name() {
-                    Some(name) => {
-                        let symbol = Symbol::new(name, SymbolType::Label, c);
-                        self.symbols.add_symbol(symbol);
-                    }
-                    None => {}
-                };
-            }
-            c += 4;
-        }
-    }
+    //fn extract_labels(&mut self, p: &Program) {
+    //    let mut c = 0;
+    //    for i in &p.instructions {
+    //        if i.is_label() {
+    //            match i.label_name() {
+    //                Some(name) => {
+    //                    let symbol = Symbol::new(name, SymbolType::Label, c);
+    //                    self.symbols.add_symbol(symbol);
+    //                }
+    //                None => {}
+    //            };
+    //        }
+    //        c += 4;
+    //    }
+    //}
 
     fn write_pie_header(&self) -> Vec<u8> {
         let mut header = vec![];
@@ -146,9 +149,10 @@ impl Assembler {
         let name = match i.get_label_name() {
             Some(name) => name,
             None => {
-                self.errors.push(AssemblerError::StringConstantDeclaredWithoutLabel {
-                    instruction: self.current_instruction,
-                });
+                self.errors
+                    .push(AssemblerError::StringConstantDeclaredWithoutLabel {
+                        instruction: self.current_instruction,
+                    });
                 return;
             }
         };
@@ -158,7 +162,8 @@ impl Assembler {
             return;
         }
 
-        let symbol = Symbol::new_with_offset(name, SymbolType::Label, (self.current_instruction * 4) + 60);
+        let symbol =
+            Symbol::new_with_offset(name, SymbolType::Label, (self.current_instruction * 4) + 60);
         self.symbols.add_symbol(symbol);
     }
 
@@ -223,26 +228,34 @@ impl Assembler {
     fn process_section_header(&mut self, header_name: &str) {
         let mut new_section: AssemblerSection = header_name.into();
         if new_section == AssemblerSection::Unknown {
-            println!("Found an section header that is unknown: {:#?}", header_name);
+            println!(
+                "Found an section header that is unknown: {:#?}",
+                header_name
+            );
             return;
         }
 
         match new_section {
-            AssemblerSection::Code { ref mut starting_instruction } => {
+            AssemblerSection::Code {
+                ref mut starting_instruction,
+            } => {
                 println!("Code section starts at: {}", self.current_instruction);
                 *starting_instruction = Some(self.current_instruction)
             }
-            AssemblerSection::Data { ref mut starting_instruction } => {
-                println!!("Data section starts at: {}", self.current_instruction);
+            AssemblerSection::Data {
+                ref mut starting_instruction,
+            } => {
+                println!("Data section starts at: {}", self.current_instruction);
                 *starting_instruction = Some(self.current_instruction)
             }
-            AssemblerSection::Unknown => println!("Found a section header that is unknown: {:?}", new_section),
+            AssemblerSection::Unknown => {
+                println!("Found a section header that is unknown: {:?}", new_section)
+            }
         };
 
         self.sections.push(new_section.clone());
         self.current_section = Some(new_section);
     }
-
 }
 
 #[derive(Debug, PartialEq, Clone)]
@@ -250,8 +263,6 @@ pub enum AssemblerPhase {
     First,
     Second,
 }
-
-
 
 #[derive(Debug, PartialEq, Clone)]
 pub enum AssemblerSection {
@@ -280,16 +291,16 @@ impl<'a> From<&'a str> for AssemblerSection {
     }
 }
 
-#[test]
-fn test_symbol_table() {
-    let mut sym = SymbolTable::new();
-    let new_symbol = Symbol::new("test".to_string(), SymbolType::Label, 12);
-    sym.add_symbol(new_symbol);
-    assert_eq!(sym.symbols.len(), 1);
-    let v = sym.symbol_value("test");
-    assert_eq!(true, v.is_some());
-    let v = v.unwrap();
-    assert_eq!(v, 12);
-    let v = sym.symbol_value("none");
-    assert_eq!(v.is_some(), false);
-}
+//#[test]
+//fn test_symbol_table() {
+//    let mut sym = SymbolTable::new();
+//    let new_symbol = Symbol::new("test".to_string(), SymbolType::Label, 12);
+//    sym.add_symbol(new_symbol);
+//    assert_eq!(sym.symbols.len(), 1);
+//    let v = sym.symbol_value("test");
+//    assert_eq!(true, v.is_some());
+//    let v = v.unwrap();
+//    assert_eq!(v, 12);
+//    let v = sym.symbol_value("none");
+//    assert_eq!(v.is_some(), false);
+//}
