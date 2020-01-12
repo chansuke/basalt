@@ -84,7 +84,6 @@ impl Instruction {
 }
 
 mod tests {
-    use super::*;
 
     #[test]
     fn test_new_hlt() {
