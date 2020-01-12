@@ -65,7 +65,7 @@ impl REPL {
                     println!("End of Symbols Listing");
                 }
                 ".load_file" => {
-                    println!("Enter the path");
+                    println!("Please enter the path which you want to load:");
                     io::stdout().flush().expect("Unable to flush stdout");
                     let mut path = String::new();
                     stdin
@@ -73,7 +73,13 @@ impl REPL {
                         .expect("Unable to read line from user");
                     let _path = path.trim();
                     let filename = Path::new(&_path);
-                    let mut file = File::open(Path::new(&filename)).expect("File not found");
+                    let mut file = match File::open(&filename) {
+                        Ok(file) => { file }
+                        Err(e) => {
+                            println!("Cannot open the file {:?}: ", e);
+                            continue;
+                        }
+                    };
                     let mut contents = String::new();
                     file.read_to_string(&mut contents)
                         .expect("There was an error reading from file");
