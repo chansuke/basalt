@@ -12,3 +12,5 @@ clap = {version = "2.33", features = ["yaml"]}
 log = "0.4"
 env_logger = "0.5.13"
 byteorder = "1"
+uuid = { version = "0.8", features = ["serde", "v4"] }
+chrono = "0.4"

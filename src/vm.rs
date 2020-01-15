@@ -1,5 +1,21 @@
 use crate::assembler::PIE_HEADER_PREFIX;
 use crate::instruction::Opcode;
+use chrono::prelude::*;
+use uuid::Uuid;
+
+#[derive(Clone, Debug)]
+pub enum VMEVentType {
+    Start,
+    Stop,
+    GracefulStop,
+    Crash,
+}
+
+#[derive(Clone, Debug)]
+pub struct VMEvent {
+    event: VMEVentType,
+    at: DateTime<Utc>,
+}
 
 pub struct VM {
     pub registers: [i32; 32],
@@ -9,6 +25,8 @@ pub struct VM {
     pub equal_flag: bool,
     heap: Vec<u8>,
     ro_data: Vec<u8>,
+    id: Uuid,
+    events: Vec<VMEvent>,
 }
 
 impl VM {
@@ -21,26 +39,43 @@ impl VM {
             equal_flag: false,
             heap: vec![],
             ro_data: vec![],
+            id: Uuid::new_v4(),
+            events: Vec::new(),
         }
     }
 
-    pub fn run(&mut self) {
+    pub fn run(&mut self) -> u32 {
+        self.events.push(VMEvent {
+            event: VMEVentType::Start,
+            at: Utc::now(),
+        });
         if !self.verify_header() {
+            self.events.push(VMEvent {
+                event: VMEVentType::Crash,
+                at: Utc::now(),
+            });
             println!("Header was not correct");
+            return 1;
         }
-        let mut is_done = false;
-        while !is_done {
+        self.counter = 64;
+        let mut is_done = 0;
+        while is_done == 0 {
             is_done = self.execute_instruction();
         }
+        self.events.push(VMEvent {
+            event: VMEVentType::Stop,
+            at: Utc::now(),
+        });
+        return 0;
     }
 
     pub fn run_once(&mut self) {
         self.execute_instruction();
     }
 
-    fn execute_instruction(&mut self) -> bool {
+    fn execute_instruction(&mut self) -> u32 {
         if self.counter >= self.program.len() {
-            return true;
+            return 1;
         }
         match self.decode_opcode() {
             Opcode::LOAD => {
@@ -72,11 +107,11 @@ impl VM {
 
             Opcode::HLT => {
                 println!("HLT");
-                return true;
+                return 0;
             }
             Opcode::IGL => {
                 println!("Illegal");
-                return true;
+                return 1;
             }
             Opcode::JMP => {
                 let target = self.registers[self.next_8_bits() as usize];
@@ -178,7 +213,7 @@ impl VM {
                 }
             }
         }
-        true
+        0
     }
 
     fn decode_opcode(&mut self) -> Opcode {

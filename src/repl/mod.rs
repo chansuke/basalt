@@ -74,7 +74,7 @@ impl REPL {
                     let _path = path.trim();
                     let filename = Path::new(&_path);
                     let mut file = match File::open(&filename) {
-                        Ok(file) => { file }
+                        Ok(file) => file,
                         Err(e) => {
                             println!("Cannot open the file {:?}: ", e);
                             continue;
