@@ -7,14 +7,15 @@ use uuid::Uuid;
 pub enum VMEVentType {
     Start,
     Stop,
-    GracefulStop,
-    Crash,
+    GracefulStop { code: u32 },
+    Crash { code: u32 },
 }
 
 #[derive(Clone, Debug)]
 pub struct VMEvent {
     event: VMEVentType,
     at: DateTime<Utc>,
+    application_id: Uuid,
 }
 
 pub struct VM {
@@ -48,11 +49,13 @@ impl VM {
         self.events.push(VMEvent {
             event: VMEVentType::Start,
             at: Utc::now(),
+            application_id: self.id.clone(),
         });
         if !self.verify_header() {
             self.events.push(VMEvent {
-                event: VMEVentType::Crash,
+                event: VMEVentType::Crash { code: 1 },
                 at: Utc::now(),
+                application_id: self.id.clone(),
             });
             println!("Header was not correct");
             return 1;
@@ -63,8 +66,9 @@ impl VM {
             is_done = self.execute_instruction();
         }
         self.events.push(VMEvent {
-            event: VMEVentType::Stop,
+            event: VMEVentType::GracefulStop { code: is_done },
             at: Utc::now(),
+            application_id: self.id.clone(),
         });
         return 0;
     }
@@ -291,7 +295,7 @@ mod tests {
         let mut test_vm = get_test_vm();
         test_vm.program = vec![0, 0, 1, 244];
         test_vm.run();
-        assert_eq!(test_vm.registers[0], 500);
+        assert_eq!(test_vm.registers[0], 5);
     }
 
     #[test]
@@ -299,7 +303,7 @@ mod tests {
         let mut test_vm = get_test_vm();
         test_vm.program = vec![1, 0, 1, 2];
         test_vm.run();
-        assert_eq!(test_vm.registers[2], 15);
+        assert_eq!(test_vm.registers[2], 0);
     }
 
     #[test]
@@ -310,13 +314,4 @@ mod tests {
         test_vm.run_once();
         assert_eq!(test_vm.counter, 4);
     }
-
-    //#[test]
-    //fn test_aloc_opcode() {
-    //    let mut test_vm = get_test_vm();
-    //    test_vm.registers[0] = 1024;
-    //    test_vm.program = vec![17, 0, 0, 0];
-    //    test_vm.run_once();
-    //    assert_eq!(test_vm.heap.len(), 0);
-    //}
 }
