@@ -118,22 +118,6 @@ impl Assembler {
         program
     }
 
-    //fn extract_labels(&mut self, p: &Program) {
-    //    let mut c = 0;
-    //    for i in &p.instructions {
-    //        if i.is_label() {
-    //            match i.label_name() {
-    //                Some(name) => {
-    //                    let symbol = Symbol::new(name, SymbolType::Label, c);
-    //                    self.symbols.add_symbol(symbol);
-    //                }
-    //                None => {}
-    //            };
-    //        }
-    //        c += 4;
-    //    }
-    //}
-
     fn write_pie_header(&self) -> Vec<u8> {
         let mut header = vec![];
         for byte in PIE_HEADER_PREFIX.into_iter() {
